@@ -448,3 +448,10 @@ IoT VLAN
 ## Disclaimer
 
 This project documents a lab/proof-of-concept implementation and troubleshooting process. Test all configuration changes in a non-production environment and adapt the examples to your own addressing, identity, VLAN and security requirements.
+
+
+## Documentation
+
+- [PacketFence configuration guide](docs/packetfence-configuration.md) - full PacketFence setup for realms, RADIUS, LDAP, EAP, connection profiles, roles, MAB and troubleshooting.
+- [PacketFence policies and access control](docs/packetfence-policies-access-control.md) - compact reference for policy objects and their relationships.
+- [UniFi configuration](docs/unifi-configuration.md) - UniFi RADIUS profile and PacketFence integration settings.
