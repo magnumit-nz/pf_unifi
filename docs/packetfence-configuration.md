@@ -742,6 +742,8 @@ IoT -> VLAN 200
 
 # 13. MAB RADIUS Authorize Filter
 
+![PacketFence MAB RADIUS authorize filter](images/radius-filter.png)
+
 The working authorize filter is:
 
 ```ini
