@@ -188,6 +188,8 @@ The tested design uses three relevant realms:
 
 ## DEFAULT Realm
 
+![PacketFence DEFAULT realm EAP configuration](images/realm-default.png)
+
 Under:
 
 ```text
@@ -204,6 +206,8 @@ configure:
 This selects the dedicated JumpCloud EAP profile for the default EAP processing path.
 
 ## NULL Realm
+
+![PacketFence NULL realm FreeRADIUS proxy configuration](images/realm-null.png)
 
 Under:
 
@@ -234,6 +238,8 @@ Authorize from PacketFence = Enabled
 This means JumpCloud validates credentials, while PacketFence still makes the final authorization decision.
 
 ## Jumpcloud Realm
+
+![PacketFence Jumpcloud realm FreeRADIUS proxy configuration](images/realm-jumpcloud.png)
 
 Under:
 
@@ -289,6 +295,8 @@ request:Realm = local
 ---
 
 # 6. JumpCloud RADIUS Authentication Source
+
+![PacketFence JumpCloud RADIUS authentication source](images/authsource-jumpcloudradius.png)
 
 Navigate to:
 
@@ -505,6 +513,8 @@ Two relevant profiles exist:
 
 ## default EAP Profile
 
+![PacketFence default EAP profile](images/eapprofile-default.png)
+
 | Setting | Value |
 | --- | --- |
 | Identifier | `default` |
@@ -520,6 +530,8 @@ Two relevant profiles exist:
 | Fast Profile | `default` |
 
 ## Jumpcloud-TTLS EAP Profile
+
+![PacketFence Jumpcloud-TTLS EAP profile](images/eapprofile-jumpcloudttls.png)
 
 | Setting | Value |
 | --- | --- |
