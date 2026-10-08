@@ -95,3 +95,58 @@ UniFi AP / Switch
 ```
 
 PacketFence then proxies normal user authentication to the configured identity provider and returns the final role/VLAN information to UniFi.
+
+
+## 2. MAC Authentication Bypass on UniFi Switch Ports
+
+For devices that cannot perform normal 802.1X authentication, configure the applicable UniFi switch port for MAC-based authentication.
+
+Open the switch port's **Port Security** settings and configure:
+
+| Setting | Value |
+| --- | --- |
+| MAC Address Filter | Disabled |
+| 802.1X Control | `MAC-Based` |
+| Idle Timeout | `300 seconds` |
+| Port Isolation | Disabled |
+
+![UniFi MAC-based port authentication](images/unifi-mac-based.png)
+
+With `802.1X Control` set to `MAC-Based`, UniFi uses the connected device's MAC address as the identity presented to RADIUS.
+
+The authentication flow is:
+
+```text
+Device
+  |
+  | MAC address
+  v
+UniFi switch port
+  |
+  | MAC-based RADIUS authentication
+  v
+PacketFence
+  |
+  | node_info.category == "UVC"
+  v
+Unifi-MAC-Auth-Local filter
+  |
+  +-- Proxy-To-Realm = local
+  +-- Realm = local
+  |
+  v
+PacketFence local policy
+  |
+  v
+UVC role / assigned VLAN
+```
+
+The endpoint must already be registered in PacketFence and assigned to the expected category:
+
+```text
+Category = UVC
+```
+
+PacketFence then matches the local MAB authorize filter and prevents the request from being proxied to JumpCloud RADIUS.
+
+Normal wired 802.1X clients should continue to use the `Ethernet-EAP` connection profile rather than MAC-based authentication.
