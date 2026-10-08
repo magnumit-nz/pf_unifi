@@ -753,7 +753,7 @@ status=enabled
 top_op=and
 description=Keep UniFi MAC authentication local to PacketFence
 merge_answer=yes
-condition=node_info.category == "IoT"
+condition=node_info.category == "UVC"
 answer.0=control:Proxy-To-Realm = local
 answer.1=request:Realm = local
 ```
