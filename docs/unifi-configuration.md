@@ -18,6 +18,8 @@ Example profile name:
 packetfence
 ```
 
+![UniFi PacketFence RADIUS profile](images/unifi-packetfence-radius-profile.png)
+
 ### RADIUS Assigned VLAN Support
 
 Enable RADIUS-assigned VLAN support for both:
