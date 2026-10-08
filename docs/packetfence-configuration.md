@@ -125,6 +125,8 @@ Use a named timezone rather than a fixed offset so daylight-saving changes are h
 
 # 4. Roles
 
+![PacketFence roles](images/roles.png)
+
 Navigate to:
 
 ```text
@@ -576,6 +578,8 @@ Both profiles use the same JumpCloud LDAP authentication source.
 
 ## Wireless BYOD Profile
 
+![PacketFence wireless BYOD connection profile](images/connprofile-wireless.png)
+
 Example:
 
 | Setting | Value |
@@ -610,6 +614,8 @@ SSID = CORP-BYOD
 ```
 
 ## Wired 802.1X Profile
+
+![PacketFence wired 802.1X connection profile](images/connprofile-wired.png)
 
 Example:
 
