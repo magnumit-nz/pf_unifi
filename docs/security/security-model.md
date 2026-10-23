@@ -97,7 +97,7 @@ PacketFence node categories correspond to roles, and a role assigned by an authe
 | --- | --- | --- | --- |
 | Auto-registration enabled on both 802.1X connection profiles | *Automatically register devices = Enabled* | Any successfully authenticated user device becomes a registered node | Documented, not changed |
 | `Max nodes per user = 0` on all roles | `0` | Understood to mean no limit on devices per user (`needs validation`); a user can register unlimited devices | Documented, not changed |
-| Single RADIUS home server / LDAP host, no failover recorded | One of each | Availability: see [Failure Behaviour](../operations/failure-behaviour.md) | Documented, not changed |
+| Single RADIUS home server / LDAP host, no failover recorded | One of each | Availability: see [Failure Behaviour](../operations/failure-behaviour.md) | Documented, not changed |\n| UniFi network-device CoA | `Use CoA = Yes`, `Use Connector For Deauth = Yes` | Configured, but live CoA/disconnect behaviour still needs validation | Documented, not changed |
 | Local source-code patch in PacketFence | RADIUS audit controller workaround | May be overwritten on upgrade; unreviewed local code | Documented, not changed; see [Known Issues](../known-issues/radius-audit-timestamp.md) |
 | Non-`UVC` MAB requests may be proxied to JumpCloud | Filter only matches `UVC`; others keep `Realm = null` | A MAC address would be sent to an external service as a username (`needs validation`) | Documented, not changed |
 | MAB devices share one VLAN | `UVC` VLAN | One compromised/spoofed camera has same reach as all | Documented, not changed |
@@ -120,7 +120,7 @@ The text uses sanitised examples, but several screenshots were captured from the
 | `authsource-jumpcloudradius.png` | The *Host* field shows a literal **public** IP address rather than `<JUMPCLOUD_RADIUS_HOST>`, so the "values replaced" sanitisation notes do not hold for this image. The secret is masked. |
 | `roles.png` | Shows real role identifiers and descriptions (e.g. `Executive`, `Wifi-staff-domain`, `BYODY9`..`13`) that differ from the generic names in the text. Some identifiers are blank/redacted. |
 | `connprofile-wireless.png` | Shows a literal test SSID (`DS RAD TST`) rather than `<WIRELESS_SSID>` / the text's `CORP-BYOD`. |
-| `unifi-packetfence-radius-profile.png` | Shows `192.168.0.20` rather than the text's `192.0.2.10`. Secrets are masked. |
+| `unifi-packetfence-radius-profile.png` | Shows `192.168.0.20` rather than the text's `192.0.2.10`. Secrets are masked. |\n| `pf_networkdevices-list.png` | Network-device identifiers are redacted, but real-looking descriptions and vendor types remain. |\n| `pfnetworkdevices-switches.png` | Network-device identifier is redacted; tested switch type and default settings remain visible. |\n| `pfnetworkdevices-radius.png` | Shows a live/private CIDR in the window title; the shared secret itself is masked. Consider re-capturing with the identifier redacted. |\n| `pfnetworkdevices-roles.png` | Shows real/test role names and VLAN IDs. Review whether those mappings are acceptable to publish. |
 
 `eap-profile-jumpcloud.png` is unreferenced, duplicates `eapprofile-jumpcloudttls.png` and shows the admin UI header.
 
