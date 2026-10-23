@@ -44,7 +44,7 @@ UniFi
 For registered MAB devices:
 
 ```text
-Registered IoT device
+Registered UVC device
     |
     v
 UniFi switch MAC-based authentication
@@ -52,12 +52,12 @@ UniFi switch MAC-based authentication
     v
 PacketFence
     |
-    | node_info.category == "IoT"
+    | node_info.category == "UVC"
     v
 Local PacketFence realm
     |
     v
-IoT role / VLAN
+UVC role / VLAN
 ```
 
 The design separates responsibilities:
@@ -87,7 +87,7 @@ PacketFence
 | RADIUS accounting | UDP/1813 |
 | Staff VLAN | `100` |
 | Student VLAN | `110` |
-| IoT VLAN | `200` |
+| UVC VLAN | `200` |
 | Management VLAN | `10` |
 | Test username | `testuser` |
 | Test MAC | `00:11:22:33:44:55` |
@@ -148,7 +148,7 @@ Typical public examples:
 | `Students-11` | Year 11 students | Student cohort access |
 | `Students-12` | Year 12 students | Student cohort access |
 | `Students-13` | Year 13 students | Student cohort access |
-| `IoT` | Cameras/security devices | Local MAB devices |
+| `UVC` | UniFi cameras and security equipment | Local MAB devices |
 | `Machine` | Generic machine role | Device access |
 | `REJECT` | Reject role | Explicit deny |
 | `Guest` | Guest users | Guest access |
@@ -729,13 +729,13 @@ Example:
 ```text
 MAC:      00:11:22:33:44:55
 Status:   Registered
-Category: IoT
+Category: UVC
 ```
 
 Example role mapping:
 
 ```text
-IoT -> VLAN 200
+UVC -> VLAN 200
 ```
 
 ---
@@ -778,7 +778,7 @@ Setting only `Proxy-To-Realm` was not sufficient in testing because the request 
 The condition:
 
 ```text
-node_info.category == "IoT"
+node_info.category == "UVC"
 ```
 
 makes local MAB an explicit trust decision.

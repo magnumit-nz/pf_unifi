@@ -69,7 +69,7 @@ Students-10
 Students-11
 Students-12
 Students-13
-IoT
+UVC
 Guest
 Voice
 REJECT

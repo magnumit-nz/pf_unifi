@@ -45,7 +45,7 @@ This design has been tested successfully for:
         PEAP / 802.1X               802.1X / MAB
              |                           |
        +-----v-----+               +-----v-----+
-       |User Device|               | IoT / UVC |
+       |User Device|               |    UVC    |
        +-----------+               +-----------+
 ```
 
@@ -53,7 +53,7 @@ PacketFence is the policy enforcement point.
 
 Normal user authentication is proxied to JumpCloud RADIUS. PacketFence then applies policy and returns the final RADIUS response, including any dynamic VLAN attributes.
 
-Registered infrastructure or IoT devices can use local PacketFence MAB without being sent to JumpCloud.
+Registered UVC devices (UniFi cameras and security equipment) can use local PacketFence MAB without being sent to JumpCloud.
 
 ## Example Network Values
 
@@ -64,7 +64,7 @@ Registered infrastructure or IoT devices can use local PacketFence MAB without b
 | RADIUS accounting | UDP/1813 |
 | Staff VLAN | `100` |
 | Student VLAN | `110` |
-| IoT / camera VLAN | `200` |
+| UVC (camera) VLAN | `200` |
 | Management VLAN | `10` |
 
 Use your own addressing and VLAN plan.
@@ -151,7 +151,7 @@ Example mappings:
 ```text
 Staff       -> VLAN 100
 Students    -> VLAN 110
-IoT         -> VLAN 200
+UVC         -> VLAN 200
 ```
 
 PacketFence policy rules should be ordered from most specific to least specific because broad rules can shadow specific roles.
@@ -222,11 +222,11 @@ A recommended approach is:
 ```text
 MAC:      00:11:22:33:44:55
 Status:   Registered
-Category: IoT
+Category: UVC
 ```
 
 ```text
-IoT -> VLAN 200
+UVC -> VLAN 200
 ```
 
 # 9. MAB RADIUS Filter
@@ -259,7 +259,7 @@ Setting only `Proxy-To-Realm` was not sufficient in testing.
 Using:
 
 ```text
-node_info.category == "IoT"
+node_info.category == "UVC"
 ```
 
 is preferable to guessing from a username or RADIUS packet format.
@@ -430,7 +430,7 @@ local realm
   |
 device role
   |
-IoT VLAN
+UVC VLAN
 ```
 
 # 19. Important Operational Notes
