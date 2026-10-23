@@ -4,12 +4,12 @@ MAB is used for endpoints that cannot perform 802.1X. In the tested design the d
 
 > `UVC` is the actual tested category and role. Where this page needs a generic example it says so explicitly.
 
-## Design (Tested)
+## Design (Rationale / Recommendation; the filter below is Tested)
 
 1. Register the endpoint in PacketFence.
 2. Assign it the explicit category `UVC`.
 3. Configure the UniFi switch port for MAC-based authentication ([UniFi Configuration](../unifi/configuration.md#mac-authentication-bypass-on-switch-ports)).
-4. Keep that category local to PacketFence with the RADIUS filter below, so the request is never proxied to JumpCloud.
+4. Keep that category local to PacketFence with the RADIUS filter below, so the request is not expected to be proxied to JumpCloud (confirm with the [validation checklist](../operations/validation-checklist.md#5-uvc-mab)).
 
 ```text
 MAC:      00:11:22:33:44:55
@@ -18,7 +18,7 @@ Category: UVC
 ```
 
 ```text
-UVC -> VLAN 200
+UVC -> VLAN 200   (example VLAN)
 ```
 
 ## Flow

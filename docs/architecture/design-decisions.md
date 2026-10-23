@@ -1,10 +1,10 @@
 # Design Decisions
 
-Each decision states what the tested implementation does (**Tested**) and why (**Rationale**). Alternatives that were tried and rejected are in [PacketFence Configuration](../packetfence/configuration.md#mab-approaches-that-failed-or-were-rejected).
+Each decision states what the tested implementation does (**Tested**) and why (**Rationale**). Alternatives that were tried and rejected are in [PacketFence Configuration](../packetfence/mab.md#mab-approaches-that-failed-or-were-rejected).
 
 ## D1. UniFi talks only to PacketFence
 
-**Tested:** UniFi RADIUS profiles point at PacketFence on UDP/1812 (auth) and UDP/1813 (accounting). No UniFi device is configured with JumpCloud as a RADIUS server.
+**Tested:** the UniFi RADIUS profile points at PacketFence on UDP/1812 (auth) and UDP/1813 (accounting). No direct UniFi-to-JumpCloud RADIUS profile is recorded.
 
 **Rationale:** UniFi can authenticate against JumpCloud RADIUS directly, but then nothing sits in the path that can map identity to a role or return a policy-driven VLAN. Putting PacketFence in the middle gives one enforcement point and one place to log and audit decisions.
 
@@ -48,7 +48,7 @@ PacketFence:  "What network access should this identity receive?"
 
 - A MAC address is not a credential, so it must not be sent to a credential-checking upstream (it would not be expected to hold an account for it).
 - Matching a resolved PacketFence node category makes "this device may use local MAB" an administrator decision recorded in PacketFence, rather than a guess from username shape or packet type.
-- Alternatives (`Ethernet-NoEAP`, MAC-shaped usernames, `Service-Type` alone) were less reliable or did not scale; see the rejected-approaches list.
+- Alternatives (`Ethernet-NoEAP`, MAC-shaped usernames, `Service-Type` alone) were less reliable or did not scale; see the [MAB rejected-approaches list](../packetfence/mab.md#mab-approaches-that-failed-or-were-rejected).
 
 **Limit of the guarantee:** this controls *which devices are handled locally*; it does not authenticate the device. See [Security Model](../security/security-model.md#mab-trust-boundary).
 

@@ -291,6 +291,8 @@ The RADIUS source itself does not contain PacketFence authorization rules. Those
 
 # 7. JumpCloud LDAP Authentication Source
 
+> No screenshot of the LDAP source or its rules exists in `docs/images`. The values below are as recorded in the original documentation; a capture is `to be captured`.
+
 Navigate to:
 
 ```text
@@ -418,6 +420,8 @@ Matches = All
 so all conditions in a rule must match.
 
 ## Rule ordering
+
+> The order below is an **example/Recommendation**. The actual rule order and rule list on the live LDAP source were not captured (`to be captured`).
 
 More specific rules should be above broad rules.
 
@@ -599,12 +603,12 @@ Separate profiles make it easier to:
 
 # 11. Normal 802.1X Flow
 
-The final user flow is:
+The user flow below is a **logical reading aid (Rationale)**, not a verified statement of PacketFence's internal order. The tested clients used PEAP/MSCHAPv2, and whether the `DEFAULT` realm's EAP profile governs that path is `needs validation` (the `NULL` realm's own EAP setting was not captured).
 
 ```text
 Client
   |
-  | PEAP / TTLS / MSCHAPv2
+  | PEAP / MSCHAPv2 (tested; TTLS is only the profile default)
   v
 UniFi
   |

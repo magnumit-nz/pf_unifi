@@ -27,7 +27,7 @@ Two further markers flag gaps:
 
 **Tested** in the documented implementation:
 
-- Wireless 802.1X using PEAP/MSCHAPv2
+- Wireless 802.1X using PEAP/MSCHAPv2 (macOS / BYOD client)
 - Wired 802.1X using PEAP/MSCHAPv2
 - JumpCloud-backed RADIUS authentication
 - PacketFence role and VLAN assignment
@@ -168,14 +168,17 @@ Do not repurpose the `NULL` realm to solve MAB; that can break working PEAP auth
 
 ## Operational rules carried by the design
 
-These are **Tested** behaviours or lessons, collected from the build:
+**Tested** lessons from the build:
 
-- Policy rule ordering is significant; most specific first.
 - Keep normal PEAP authentication on the working JumpCloud proxy realm (`NULL`).
 - Keep explicitly registered MAB device classes local.
 - Do not use `Ethernet-NoEAP` alone as an early proxy decision.
 - Verify dynamic VLANs end-to-end across trunks, DHCP and gateway.
 - Do not treat UniFi Etherlighting as proof of the effective RADIUS VLAN ([Known Issues](../known-issues/README.md)).
+
+**Recommendations** (general practice, not observations):
+
+- Order policy rules most specific first.
 - PacketFence upgrades may overwrite local source-code workarounds; prefer upstream fixes.
 - Never publish RADIUS shared secrets, LDAP bind credentials, API tokens or real directory identifiers.
 

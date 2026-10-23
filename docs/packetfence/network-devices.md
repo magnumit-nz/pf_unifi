@@ -23,7 +23,7 @@ UniFi APs and switches are defined under this section. Whether they are defined 
 
 | PacketFence network device | UniFi RADIUS profile ([UniFi Configuration](../unifi/configuration.md)) | Status |
 | --- | --- | --- |
-| Device IP address / range | Source address of the AP or switch as seen by PacketFence | Tested requirement; exact values `to be captured` |
+| Device IP address / range | Source address of the AP or switch as seen by PacketFence | Inferred (RADIUS clients must be known to PacketFence); exact values `to be captured` |
 | RADIUS shared secret | Shared secret on both the authentication and accounting servers in the UniFi profile (`<RADIUS_SHARED_SECRET>`) | Tested requirement (must match exactly) |
 | Authentication port | UDP/1812 | Tested |
 | Accounting port | UDP/1813 | Tested |

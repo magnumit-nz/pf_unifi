@@ -1,10 +1,12 @@
 # Failure Behaviour
 
-What is expected to happen when each dependency fails. The tested implementation proved the *working* paths; most failure outcomes were **not** exercised. Anything not proven is marked `needs validation`: treat it as a hypothesis derived from the configuration, and fill in the **Observed** column when you test.
+What is expected to happen when each dependency fails. The tested implementation proved the *working* paths; most failure outcomes were **not** exercised. Anything not proven is marked `needs validation`: treat it as a hypothesis derived from the configuration, and record results in the table at the end when you test.
 
 Only configuration facts recorded in this repository are quoted as facts.
 
-## Recorded timing and health settings (Tested configuration)
+## Recorded timing and health settings
+
+RADIUS source values are confirmed by screenshot; LDAP source values are as recorded in the original text (no screenshot, `to be captured`).
 
 | Source | Setting | Value |
 | --- | --- | --- |
@@ -60,7 +62,7 @@ Dead duration `60` implies the source is skipped for about a minute after failur
 
 **Expectation (`needs validation`):** UniFi is configured with one RADIUS server (PacketFence) and no secondary is documented, so no new authentication can succeed. Whether already-connected wired and wireless sessions stay up, and whether UniFi falls back to any local or default network, depends on UniFi behaviour that is not recorded.
 
-**Consider:** a second PacketFence node or UniFi secondary RADIUS server is a design decision not covered by the tested build. See Production Hardening.
+**Consider:** a second PacketFence node or UniFi secondary RADIUS server is a design decision not covered by the tested build. See the [hardening checklist](../security/security-model.md#production-hardening-checklist-recommendations-none-applied).
 
 **To test:** stop `packetfence-radiusd-auth` (non-production) and record behaviour of an existing session, a new 802.1X login, and a MAB device being plugged in.
 

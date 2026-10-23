@@ -47,7 +47,7 @@ Cases to test and record, each marked `needs validation` until proven:
 | --- | --- | --- |
 | MAC never seen by PacketFence | Reject / no access | `needs validation` |
 | MAC known to PacketFence but unregistered | Reject / no access | `needs validation` |
-| MAC registered with a category other than `UVC` (e.g. `voice`, `gaming`) | Not handled locally; expected to be proxied and rejected | `needs validation` |
+| MAC registered with a category other than `UVC` (e.g. `voice`, `gaming` (names as in the roles screenshot)) | Not handled locally; expected to be proxied and rejected | `needs validation` |
 | MAC registered as `UVC` but wrong switch port | Accepted (MAC is the identity, not the port) | `needs validation` |
 | `UVC` device on a port set to 802.1X rather than MAC-Based | Port does not send a MAB request | `needs validation` |
 

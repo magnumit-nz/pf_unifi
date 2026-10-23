@@ -49,7 +49,7 @@ UniFi AP / switch port places the session in VLAN 100
 
 ## Rule ordering matters
 
-Rules are evaluated in order, so a broad rule above a specific one shadows it. Use most-specific-first:
+Rules are evaluated in order, so a broad rule above a specific one shadows it. Use most-specific-first (**Recommendation**; example order, the live order is `to be captured`):
 
 ```text
 1. Privileged Staff

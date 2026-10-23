@@ -66,4 +66,4 @@ UVC Role / VLAN
 
 ## Rule ordering
 
-Most specific LDAP group rules first. The tested ordering and the reasoning are in [Configuration: Rule ordering](configuration.md#8-ldap-authentication-rules).
+Most specific LDAP group rules first (a Recommendation; the actual live order is `to be captured`). Example and reasoning in [Configuration: Rule ordering](configuration.md#8-ldap-authentication-rules).
