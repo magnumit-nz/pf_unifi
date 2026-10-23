@@ -1,100 +1,36 @@
 # PacketFence 15 Configuration Guide
 
-This guide documents the PacketFence-side configuration for a working UniFi + JumpCloud NAC design using:
-
-- UniFi wired and wireless infrastructure
-- PacketFence 15 as the NAC and policy engine
-- JumpCloud RADIUS for credential validation
-- JumpCloud LDAP for group membership and authorization
-- dynamic VLAN assignment
-- local PacketFence MAB for explicitly registered devices
+This is the PacketFence build path for the tested UniFi + JumpCloud design. It records what was configured (**Tested**). For why, see [Design Decisions](../architecture/design-decisions.md); for the end-to-end picture, see the [Architecture Overview](../architecture/overview.md).
 
 > **Public documentation notice**
 >
-> All IP addresses, VLAN IDs, usernames, MAC addresses, directory identifiers, group names and organisational role names shown here are examples or placeholders. Do not publish RADIUS shared secrets, LDAP bind credentials, API tokens or production directory identifiers.
+> All IP addresses, VLAN IDs, usernames, MAC addresses, directory identifiers, group names and organisational role names shown here are examples or placeholders. Do not publish RADIUS shared secrets, LDAP bind credentials, API tokens or production directory identifiers. Some screenshots show less-sanitised values than the text; see [Security Model](../security/security-model.md#documentation-hygiene).
 
----
+Build order:
 
-## 1. Reference Architecture
+1. [General settings](#3-general-settings) (timezone)
+2. [Roles](#4-roles)
+3. [Realms](#5-realms)
+4. [JumpCloud RADIUS source](#6-jumpcloud-radius-authentication-source) and [LDAP source](#7-jumpcloud-ldap-authentication-source)
+5. [LDAP rules](#8-ldap-authentication-rules)
+6. [EAP profiles](#9-eap-profiles)
+7. [Connection profiles](#10-connection-profiles)
+8. [Network devices](network-devices.md) (UniFi as NAS)
+9. [MAB](mab.md)
+10. [UniFi side](../unifi/configuration.md)
+11. [Validate](../operations/validation-checklist.md)
 
-```text
-802.1X Client
-    |
-    v
-UniFi AP / Switch
-    |
-    | RADIUS 1812 / 1813
-    v
-PacketFence
-    |
-    +---- Authentication ----> JumpCloud RADIUS
-    |
-    +---- Authorization -----> JumpCloud LDAP
-    |
-    v
-PacketFence role / policy
-    |
-    v
-Access-Accept + VLAN attributes
-    |
-    v
-UniFi
-```
-
-For registered MAB devices:
+Role separation, in one line each:
 
 ```text
-Registered UVC device
-    |
-    v
-UniFi switch MAC-based authentication
-    |
-    v
-PacketFence
-    |
-    | node_info.category == "UVC"
-    v
-Local PacketFence realm
-    |
-    v
-UVC role / VLAN
-```
-
-The design separates responsibilities:
-
-```text
-JumpCloud RADIUS
-    -> validate credentials
-
-JumpCloud LDAP
-    -> expose user/group membership
-
-PacketFence
-    -> evaluate rules
-    -> assign roles
-    -> assign VLANs
-    -> enforce policy
+JumpCloud RADIUS -> validate credentials
+JumpCloud LDAP   -> expose user/group membership
+PacketFence      -> evaluate rules, assign roles and VLANs, enforce policy
 ```
 
 ---
 
-## 2. Example Values
-
-| Setting | Example |
-| --- | --- |
-| PacketFence server | `192.0.2.10` |
-| RADIUS authentication | UDP/1812 |
-| RADIUS accounting | UDP/1813 |
-| Staff VLAN | `100` |
-| Student VLAN | `110` |
-| UVC VLAN | `200` |
-| Management VLAN | `10` |
-| Test username | `testuser` |
-| Test MAC | `00:11:22:33:44:55` |
-
----
-
-# 3. General PacketFence Settings
+# 3. General Settings
 
 ## Timezone
 
@@ -125,7 +61,7 @@ Use a named timezone rather than a fixed offset so daylight-saving changes are h
 
 # 4. Roles
 
-![PacketFence roles](images/roles.png)
+![PacketFence roles](../images/roles.png)
 
 Navigate to:
 
@@ -136,6 +72,8 @@ Configuration
 ```
 
 PacketFence roles represent the policy outcome for a user or device.
+
+> **Screenshot vs text.** The screenshot is the real role list and uses different identifiers from the generic examples below (for example `BYODY9`..`BYODY13`, `Wifi-staff-byod`, `Wifi-staff-domain`, `Executive`, `User`, `gaming`, `guest`, `voice`). The one role that is identical in both is **`UVC`** ("Unifi Cameras and Security Equipment"), which is the tested MAB role. The table below uses generic names for the user roles.
 
 Typical public examples:
 
@@ -190,7 +128,7 @@ The tested design uses three relevant realms:
 
 ## DEFAULT Realm
 
-![PacketFence DEFAULT realm EAP configuration](images/realm-default.png)
+![PacketFence DEFAULT realm EAP configuration](../images/realm-default.png)
 
 Under:
 
@@ -209,7 +147,7 @@ This selects the dedicated JumpCloud EAP profile for the default EAP processing 
 
 ## NULL Realm
 
-![PacketFence NULL realm FreeRADIUS proxy configuration](images/realm-null.png)
+![PacketFence NULL realm FreeRADIUS proxy configuration](../images/realm-null.png)
 
 Under:
 
@@ -241,7 +179,7 @@ This means JumpCloud validates credentials, while PacketFence still makes the fi
 
 ## Jumpcloud Realm
 
-![PacketFence Jumpcloud realm FreeRADIUS proxy configuration](images/realm-jumpcloud.png)
+![PacketFence Jumpcloud realm FreeRADIUS proxy configuration](../images/realm-jumpcloud.png)
 
 Under:
 
@@ -298,7 +236,7 @@ request:Realm = local
 
 # 6. JumpCloud RADIUS Authentication Source
 
-![PacketFence JumpCloud RADIUS authentication source](images/authsource-jumpcloudradius.png)
+![PacketFence JumpCloud RADIUS authentication source](../images/authsource-jumpcloudradius.png)
 
 Navigate to:
 
@@ -515,7 +453,7 @@ Two relevant profiles exist:
 
 ## default EAP Profile
 
-![PacketFence default EAP profile](images/eapprofile-default.png)
+![PacketFence default EAP profile](../images/eapprofile-default.png)
 
 | Setting | Value |
 | --- | --- |
@@ -533,7 +471,7 @@ Two relevant profiles exist:
 
 ## Jumpcloud-TTLS EAP Profile
 
-![PacketFence Jumpcloud-TTLS EAP profile](images/eapprofile-jumpcloudttls.png)
+![PacketFence Jumpcloud-TTLS EAP profile](../images/eapprofile-jumpcloudttls.png)
 
 | Setting | Value |
 | --- | --- |
@@ -553,11 +491,13 @@ The `DEFAULT` realm is explicitly configured to use `Jumpcloud-TTLS`.
 
 The dedicated profile is narrower than the built-in default profile and makes TTLS the default EAP method.
 
+> **`Jumpcloud-TTLS` is a profile name and default, not a statement of the client method.** The profile's *Default EAP Type* is `TTLS`, but it also enables `MSCHAPv2` and `PEAP`, and the tested wireless and wired clients authenticated with **PEAP/MSCHAPv2**. See [Design Decision D8](../architecture/design-decisions.md#d8-jumpcloud-ttls-is-a-profile-name-and-default-not-a-client-mandate). Whether any tested client negotiated TTLS is not recorded (`needs validation`).
+
 ## Operational guidance
 
 - Keep `Jumpcloud-TTLS` associated with the `DEFAULT` realm.
 - Do not remove `MSCHAPv2` or `PEAP` while clients still depend on them.
-- Review whether `MD5` is actually required before production use.
+- `MD5` is enabled in both profiles as tested. Whether it is required is unproven; see [Security Model](../security/security-model.md#eap-md5-is-enabled).
 - Changes to `tls-common` can affect PEAP, TTLS and TLS authentication.
 
 ---
@@ -578,7 +518,7 @@ Both profiles use the same JumpCloud LDAP authentication source.
 
 ## Wireless BYOD Profile
 
-![PacketFence wireless BYOD connection profile](images/connprofile-wireless.png)
+![PacketFence wireless BYOD connection profile](../images/connprofile-wireless.png)
 
 Example:
 
@@ -615,7 +555,7 @@ SSID = CORP-BYOD
 
 ## Wired 802.1X Profile
 
-![PacketFence wired 802.1X connection profile](images/connprofile-wired.png)
+![PacketFence wired 802.1X connection profile](../images/connprofile-wired.png)
 
 Example:
 
@@ -715,103 +655,11 @@ Tunnel-Private-Group-Id = "<VLAN ID>"
 
 # 12. MAC Authentication Bypass
 
-MAB is used for endpoints that cannot perform normal 802.1X.
-
-Recommended design:
-
-1. Register the endpoint in PacketFence.
-2. Assign an explicit device category.
-3. Configure the UniFi switch port for MAC-based authentication.
-4. Keep that category local to PacketFence.
-
-Example:
-
-```text
-MAC:      00:11:22:33:44:55
-Status:   Registered
-Category: UVC
-```
-
-Example role mapping:
-
-```text
-UVC -> VLAN 200
-```
+MAB (category `UVC`, the `Unifi-MAC-Auth-Local` RADIUS filter, rejected approaches) is documented in [MAB](mab.md). The filter screenshot `radius-filter.png` is shown there.
 
 ---
 
-# 13. MAB RADIUS Authorize Filter
-
-![PacketFence MAB RADIUS authorize filter](images/radius-filter.png)
-
-The working authorize filter is:
-
-```ini
-[Unifi-MAC-Auth-Local]
-scopes=packetfence.authorize
-status=enabled
-top_op=and
-description=Keep UniFi MAC authentication local to PacketFence
-merge_answer=yes
-condition=node_info.category == "UVC"
-answer.0=control:Proxy-To-Realm = local
-answer.1=request:Realm = local
-```
-
-The effective filter configuration can be inspected in:
-
-```text
-/usr/local/pf/conf/radius_filters.conf
-```
-
-Both realm assignments are required:
-
-```text
-control:Proxy-To-Realm = local
-request:Realm = local
-```
-
-Setting only `Proxy-To-Realm` was not sufficient in testing because the request could retain `Realm = null` and still follow the JumpCloud proxy path.
-
-## Why use node category
-
-The condition:
-
-```text
-node_info.category == "UVC"
-```
-
-makes local MAB an explicit trust decision.
-
-Unknown devices are not automatically trusted simply because they present a MAC-shaped username.
-
----
-
-# 14. MAB Approaches That Failed or Were Rejected
-
-## `connection_type = Ethernet-NoEAP`
-
-Do not use this as the sole early authorize-stage MAB detector.
-
-During testing it also caught legitimate wired PEAP traffic before the inner EAP/MSCHAPv2 exchange had completed.
-
-## MAC-shaped username matching
-
-Example:
-
-```text
-radius_request.User-Name == "001122334455"
-```
-
-Useful for troubleshooting, but not a scalable production policy.
-
-## Service-Type alone
-
-Attributes such as `Call-Check` can help identify MAB during debugging, but the resolved PacketFence node category proved to be a more reliable policy decision point.
-
----
-
-# 15. Dynamic VLAN Requirements
+# 13. Dynamic VLAN Requirements
 
 PacketFence returns standard RADIUS tunnel attributes:
 
@@ -833,7 +681,7 @@ A correct PacketFence Access-Accept cannot compensate for a missing VLAN on the 
 
 ---
 
-# 16. RADIUS Accounting
+# 14. RADIUS Accounting
 
 UniFi sends accounting directly to PacketFence on:
 
@@ -847,131 +695,19 @@ Use PacketFence accounting and RADIUS audit data to correlate session state and 
 
 ---
 
-# 17. RADIUS Audit Log Timestamp Issue
+# 15. Known Issue: RADIUS Audit Timestamp
 
-PacketFence 15 was observed serializing a local `radius_audit_log.created_at` value as though it were already UTC.
-
-Example:
-
-```text
-Database:
-2026-10-08 09:03:58
-
-Incorrect API representation:
-2026-10-08T09:03:58Z
-```
-
-With a `Pacific/Auckland` browser during NZDT, the GUI then displayed the time 13 hours ahead.
-
-The investigation showed:
-
-```text
-RADIUS Event-Timestamp    correct local time
-MariaDB created_at        correct local time
-DAL find()                correct local time
-DAL search()              correct local time
-Unified API               local value incorrectly marked with Z
-Browser                   applies timezone conversion
-GUI                       incorrect
-```
-
-Affected controller:
-
-```text
-/usr/local/pf/lib/pf/UnifiedApi/Controller/RadiusAuditLogs.pm
-```
-
-The local workaround converts the stored local timestamp into real UTC before API serialization.
-
-After modifying the controller, restart both:
-
-```bash
-systemctl restart packetfence-pfperl-api
-systemctl restart packetfence-api-frontend
-```
-
-Do not work around this bug by changing the server or PacketFence timezone.
-
-An upstream fix was prepared for the PacketFence project.
+PacketFence 15 shows RADIUS Audit entries at the wrong local time (+13 hours with `Pacific/Auckland` during NZDT) because the API marks a local timestamp as UTC. The build works without the workaround; it only affects how audit times are displayed, but it matters when correlating logs. Details, evidence and the local workaround are in [Known Issues: RADIUS audit timestamp](../known-issues/radius-audit-timestamp.md). Do not "fix" it by changing the server or PacketFence timezone.
 
 ---
 
-# 18. Service and Troubleshooting Checks
+# 16. Service Checks and Troubleshooting
 
-## RADIUS service
-
-```bash
-systemctl status packetfence-radiusd-auth --no-pager -l
-```
-
-## API services
-
-```bash
-systemctl status packetfence-pfperl-api --no-pager -l
-systemctl status packetfence-api-frontend --no-pager -l
-```
-
-## Time
-
-```bash
-timedatectl
-date
-grep -n '^timezone' /usr/local/pf/conf/pf.conf
-```
-
-## RADIUS traffic
-
-```bash
-tcpdump -ni any -s0 'udp port 1812 or udp port 1813'
-```
-
-## Generated realm configuration
-
-```bash
-grep -n -A8 -B2 '^realm ' /usr/local/pf/raddb/proxy.conf.inc
-```
-
-## RADIUS filters
-
-```bash
-cat /usr/local/pf/conf/radius_filters.conf
-```
+Commands and the stage-by-stage method are in [Troubleshooting](../operations/troubleshooting.md). The post-build test list is the [Validation Checklist](../operations/validation-checklist.md).
 
 ---
 
-# 19. Troubleshooting Order
-
-Work through the path in this order:
-
-```text
-1. Did UniFi send the RADIUS request?
-2. Did PacketFence receive it?
-3. Which connection profile matched?
-4. Which EAP profile was selected?
-5. Which realm did PacketFence select?
-6. Was the request local or proxied?
-7. Did JumpCloud RADIUS authenticate the user?
-8. Did JumpCloud LDAP return the expected group membership?
-9. Which PacketFence authentication rule matched?
-10. Which PacketFence role was assigned?
-11. Which VLAN attributes were returned?
-12. Did UniFi apply the VLAN?
-13. Did the endpoint receive DHCP and usable connectivity?
-```
-
-Treat these as separate stages:
-
-```text
-authentication
-    != authorization
-    != role selection
-    != VLAN assignment
-    != network transport
-```
-
----
-
-# 20. Known-Good Design Rules
+# 17. Known-Good Design Rules
 
 The final implementation follows these principles:
 
@@ -983,27 +719,23 @@ The final implementation follows these principles:
 6. Wired and wireless access use separate connection profiles.
 7. Registered MAB devices are identified using `node_info.category`.
 8. MAB overrides both `Proxy-To-Realm` and `Realm` to `local`.
-9. Unknown MAB endpoints are not automatically trusted.
+9. Unknown MAB endpoints are not automatically trusted (design intent; the observed outcome is `needs validation`, see the [Authentication Matrix](../architecture/authentication-matrix.md#unknown-and-unregistered-mac-behaviour)).
 10. Authentication rules are ordered from most specific to least specific.
 11. Dynamic VLANs are validated end-to-end across the network.
 12. Site-specific source-code workarounds should be replaced by upstream fixes where possible.
 
 ---
 
-## Security Notes
+## Security
 
-- Never commit RADIUS shared secrets.
-- Never commit JumpCloud LDAP bind passwords.
-- Never commit API keys or service-account credentials.
-- Avoid publishing production directory identifiers.
-- Use documentation-only IP addresses and MAC addresses in public examples.
-- Review `SSL Verify Mode = none` before production.
-- Review whether EAP-MD5 is actually required.
-- Prefer explicit MAB registration/category assignment over implicit trust.
+Hardening items for this configuration (`SSL Verify Mode = none`, EAP-MD5, MAB trust boundary) are in the [Security Model](../security/security-model.md). They are documented, not changed here.
 
 ---
 
 ## Related Documentation
 
-- [UniFi configuration](unifi-configuration.md)
-- [Project overview](../README.md)
+- [Network Devices](network-devices.md)
+- [MAB](mab.md)
+- [UniFi configuration](../unifi/configuration.md)
+- [Architecture Overview](../architecture/overview.md)
+- [Project README](../../README.md)

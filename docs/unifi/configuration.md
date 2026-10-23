@@ -5,10 +5,12 @@ This page documents the UniFi-side configuration used to send 802.1X and MAC-bas
 > **Public documentation notice**
 >
 > IP addresses, VLAN IDs and other environment-specific values shown in this guide have been replaced with documentation examples. RADIUS shared secrets must never be published.
+>
+> This page records the **Tested** UniFi settings. Design rationale is in [Design Decisions](../architecture/design-decisions.md).
 
 ---
 
-## 1. Create the PacketFence RADIUS Profile
+## Create the PacketFence RADIUS Profile
 
 In UniFi Network, create a RADIUS profile for PacketFence.
 
@@ -18,7 +20,9 @@ Example profile name:
 packetfence
 ```
 
-![UniFi PacketFence RADIUS profile](images/unifi-packetfence-radius-profile.png)
+> The screenshot was taken from a lab profile named `pf` with a different example address (`192.168.0.20`) from the `192.0.2.10` used in the text. Use your own PacketFence address; the shared secret is never shown.
+
+![UniFi PacketFence RADIUS profile](../images/unifi-packetfence-radius-profile.png)
 
 ### RADIUS Assigned VLAN Support
 
@@ -60,7 +64,7 @@ Example:
 | Port | `1812` |
 | Shared Secret | `<RADIUS_SHARED_SECRET>` |
 
-The shared secret must exactly match the secret configured for the corresponding UniFi NAS/network device in PacketFence.
+The shared secret must exactly match the secret configured for the corresponding UniFi NAS/network device in PacketFence ([Network Devices](../packetfence/network-devices.md)).
 
 Do not commit the real secret to source control.
 
@@ -97,7 +101,7 @@ UniFi AP / Switch
 PacketFence then proxies normal user authentication to the configured identity provider and returns the final role/VLAN information to UniFi.
 
 
-## 2. MAC Authentication Bypass on UniFi Switch Ports
+## MAC Authentication Bypass on Switch Ports
 
 For devices that cannot perform normal 802.1X authentication, configure the applicable UniFi switch port for MAC-based authentication.
 
@@ -110,7 +114,7 @@ Open the switch port's **Port Security** settings and configure:
 | Idle Timeout | `300 seconds` |
 | Port Isolation | Disabled |
 
-![UniFi MAC-based port authentication](images/unifi-mac-based.png)
+![UniFi MAC-based port authentication](../images/unifi-mac-based.png)
 
 With `802.1X Control` set to `MAC-Based`, UniFi uses the connected device's MAC address as the identity presented to RADIUS.
 
@@ -147,6 +151,23 @@ The endpoint must already be registered in PacketFence and assigned to the expec
 Category = UVC
 ```
 
-PacketFence then matches the local MAB authorize filter and prevents the request from being proxied to JumpCloud RADIUS.
+PacketFence then matches the local MAB authorize filter and prevents the request from being proxied to JumpCloud RADIUS. See [MAB](../packetfence/mab.md).
 
 Normal wired 802.1X clients should continue to use the `Ethernet-EAP` connection profile rather than MAC-based authentication.
+
+### Port-level notes
+
+- **Tested** settings are exactly those in the table above. `MAC Address Filter` and `Port Isolation` were left disabled.
+- The 300-second idle timeout is as tested. How it interacts with silent devices (camera idle, re-authentication after timeout) is `needs validation`.
+- Port-level MAB is only as strong as physical access to the port. See the [MAB trust boundary](../security/security-model.md#mab-trust-boundary).
+- Every VLAN PacketFence can return must exist and be tagged on the switch uplinks/trunks. See [Failure Behaviour](../operations/failure-behaviour.md#missing-vlan-on-trunk).
+
+## UniFi Etherlighting Caveat
+
+Etherlighting did not reliably reflect a VLAN dynamically assigned by RADIUS. Verify the effective VLAN from PacketFence RADIUS replies, UniFi client details, DHCP and connectivity. See [Known Issues](../known-issues/README.md).
+
+## Related
+
+- [PacketFence Network Devices](../packetfence/network-devices.md)
+- [Authentication Matrix](../architecture/authentication-matrix.md)
+- [Validation Checklist](../operations/validation-checklist.md)
