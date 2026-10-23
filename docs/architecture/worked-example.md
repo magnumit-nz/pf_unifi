@@ -20,7 +20,7 @@ PacketFence LDAP source "Jumpcloud"
 Action: Role = Staff
         |
         v
-Role -> VLAN mapping (example: Staff -> 100)
+Role -> VLAN mapping on the UniFi network-device definition (example: Staff -> 100)
         |
         v
 Access-Accept
@@ -42,7 +42,7 @@ UniFi AP / switch port places the session in VLAN 100
 | 4 | PacketFence looks up group membership | LDAP source `Jumpcloud` | Base DN `ou=Users,o=<JUMPCLOUD_ORG_ID>,dc=jumpcloud,dc=com`; username attribute `uid` | Tested |
 | 5 | An authentication rule matches | LDAP source rule list | `memberOf` equals `cn=Staff,ou=Users,o=<JUMPCLOUD_ORG_ID>,dc=jumpcloud,dc=com`, `Matches = All` | Tested |
 | 6 | Rule assigns a role | Rule action | `Role = Staff` (optionally an access duration; one tested rule used 5 days) | Tested |
-| 7 | Role is mapped to a VLAN | PacketFence network device role mapping | `Staff -> 100` | Mapping location `to be captured` (see [Network Devices](../packetfence/network-devices.md)) |
+| 7 | Role is mapped to a VLAN | PacketFence network device -> Roles -> VLAN ID | `Staff -> 100` (illustrative) | Mapping location and mechanism Tested; example value illustrative (see [Network Devices](../packetfence/network-devices.md)) |
 | 8 | PacketFence returns tunnel attributes | RADIUS Access-Accept | `Tunnel-Type = VLAN`, `Tunnel-Medium-Type = IEEE-802`, `Tunnel-Private-Group-Id = "100"` | Tested |
 | 9 | UniFi applies the VLAN | UniFi RADIUS profile with *RADIUS Assigned VLAN Support* enabled | Session placed in VLAN 100 | Tested |
 | 10 | Endpoint gets addressing | VLAN 100 DHCP / gateway | Lease and connectivity | Tested (VLAN must exist on all trunks; see [Failure Behaviour](../operations/failure-behaviour.md#missing-vlan-on-trunk)) |
